@@ -1,60 +1,58 @@
-import streamlit as st  # Import Streamlit
+import streamlit as st
+import pandas as pd
+import requests
+import msal  # Microsoft Authentication Library
 
-# Title & Subheader
-st.title("Welcome to Matt's App!")
-st.subheader("This is a simple UI demo.")
+# Microsoft Graph API Credentials
+CLIENT_ID = "your-client-id"
+CLIENT_SECRET = "your-client-secret"
+TENANT_ID = "your-tenant-id"
+AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
+SCOPES = ["https://graph.microsoft.com/.default"]
+EXCEL_FILE_PATH = "/drives/{drive-id}/items/{item-id}/workbook/worksheets('Sheet1')/range(address='A1:Z1000')"
 
-# Paragraph Text
-st.write("This will help get us started with the Redemption Master program to move it to a more futuristic version that will work faster and smarter.")
+# Authenticate & Get Access Token
+def get_access_token():
+    app = msal.ConfidentialClientApplication(CLIENT_ID, authority=AUTHORITY, client_credential=CLIENT_SECRET)
+    token = app.acquire_token_for_client(SCOPES)
+    return token["access_token"]
 
-# Adding Markdown-style Text
-st.markdown("### This is Markdown Text 🔥")
-st.markdown("*You can use **bold**, _italic_, or `code` formatting!*")
-# Button Example
-if st.button("Click Me!"):
-    st.success("Thank you for clicking! 🎉")
+# Fetch Excel Data from OneDrive/SharePoint
+def fetch_excel_data():
+    access_token = get_access_token()
+    url = f"https://graph.microsoft.com/v1.0/me/drive/root:/YourExcelFile.xlsx:/workbook/worksheets('Sheet1')/usedRange"
     
-import pandas as pd  # Import Pandas
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(url, headers=headers)
 
-# Upload Excel File
-uploaded_file = st.file_uploader("Upload an Excel File", type=["xlsx"])
+    if response.status_code == 200:
+        data = response.json()
+        values = data.get("values", [])
+        return pd.DataFrame(values[1:], columns=values[0])  # Convert to Pandas DataFrame
+    else:
+        st.error("Failed to fetch data from Excel Online.")
+        return pd.DataFrame()
 
-if uploaded_file:
-    # Read Excel File
-    df = pd.read_excel(uploaded_file)
+# Streamlit UI
+st.title("Product Data from Excel Online (SSO)")
 
-    # Show the DataFrame as a table
-    st.write("### Data Preview:")
-    st.dataframe(df)  # This displays an interactive table!
+if st.button("Load Data"):
+    df = fetch_excel_data()
+    st.dataframe(df)
+    def update_excel_online(df):
+    access_token = get_access_token()
+    url = https://daveandbusters0.sharepoint.com/:x:/s/RedemptionTeam/Ef7HTixT2BpGtdWm62GXD0UBrtJhjXDzpNPo_v9G5tXuyQ?e=4%3AvJfxIi&fromShare=true&at=9&CID=b2737c76-f631-fb61-5c79-5638b59bf6c1('MASTER DATA')/range(address='A1:AF4000')"
+    
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+    payload = {"values": [df.columns.tolist()] + df.values.tolist()}
+    
+    response = requests.patch(url, headers=headers, json=payload)
 
-if uploaded_file:
-    df = pd.read_excel(uploaded_file)
+    if response.status_code == 200:
+        st.success("Excel data updated successfully!")
+    else:
+        st.error("Failed to update Excel Online.")
 
-    # Dropdown for selecting a column value
-    column_name = "Location Code"  # Change this to match your actual column
-    if column_name in df.columns:
-        options = df[column_name].unique()
-        selected_option = st.selectbox(f"Select a {column_name}:", options)
-
-        # Show filtered data
-        filtered_df = df[df[column_name] == selected_option]
-        st.write("### Filtered Data:")
-        st.dataframe(filtered_df)
-        
-if uploaded_file:
-    df = pd.read_excel(uploaded_file)
-
-    # Filter data before exporting
-    if "Product Active Flag" in df.columns:
-        filtered_data = df[df["Product Active Flag"] == "Y"]
-
-        # Button to export as a tab-delimited file
-        if st.button("Export as Tab-Delimited File"):
-            filtered_data.to_csv("output.txt", sep="\t", index=False)
-            st.success("File exported successfully!")
-
-
-
-
-
+if st.button("Save Changes"):
+    update_excel_online(df)
 
