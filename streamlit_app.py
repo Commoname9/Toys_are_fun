@@ -1,23 +1,3 @@
-import pandas as pd
-import streamlit as st
-
-# OneDrive file path
-onedrive_path = "C:\Users\matthew.patridge\OneDrive - daveandbusters.com\Apps\Streamlit"
-
-# Load an Excel file from OneDrive
-file_path = onedrive_path + "products.xlsx"
-df = pd.read_excel(file_path)
-
-# Show data in Streamlit
-st.write("### Product Data from OneDrive:")
-st.dataframe(df)
-
-# Save an exported tab-delimited file to OneDrive
-export_path = onedrive_path + "output.txt"
-df.to_csv(export_path, sep="\t", index=False)
-
-st.success("File saved successfully to OneDrive!")
-
 import streamlit as st  # Import Streamlit
 
 # Title & Subheader
