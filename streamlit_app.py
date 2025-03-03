@@ -88,6 +88,83 @@ if uploaded_file:
         if st.button("Export as Tab-Delimited File"):
             filtered_data.to_csv("output.txt", sep="\t", index=False)
             st.success("File exported successfully!")
+import streamlit as st
+
+# Title
+st.title("📦 Adding a New Product Guide")
+
+# Instructions Section
+st.markdown("""
+## 🛠 How to Add a New Product
+
+Follow these steps to properly add a new product and process it for CrunchTime.
+
+---
+
+### **1️⃣ Update Master Data**
+- Open the **Master Data file** and fill in all required fields **except for RCP-####**.
+- Ensure the data is correct before proceeding.
+
+---
+
+### **2️⃣ Create the Recipe File (090_RECIPE)**
+- Copy the **lines associated with the new item** into a **090_RECIPE file**.
+- Save as **`090_itemnamecustom.txt`** and send it to CrunchTime for processing.
+
+---
+
+### **3️⃣ Create the Product File (080_PRODUCT)**
+- Copy the **lines associated with the new item** into a **080_PRODUCT file**.
+- Save as **`080_itemnamecustom.txt`** and send it to CrunchTime.
+
+---
+
+### **4️⃣ Assign Product to Locations**
+- Verify that **Y/N values** in **Store Location Products** are correct.
+- This determines **where the item will be available**.
+
+---
+
+### **5️⃣ Update & Download RM File**
+- After assigning locations, **download a copy of the RM file**.
+- **Delete all rows that are NOT new products** in Excel.
+- Save the updated file.
+
+---
+
+### **6️⃣ Create & Process Location Data**
+- Generate the **266_Location Product data file** to define **storage locations** for the new item.
+- Save as **`266_storagecustom.txt`** and send it to CrunchTime.
+
+---
+
+### **7️⃣ Set Minimum & Maximum PAR Levels**
+- Create the **266_Min_Max file** to define **Min/Max PAR levels, VO, and Pricing**.
+- Save as **`266_Min_Maxcustom.txt`** and send it to CrunchTime.
+
+---
+
+### **8️⃣ Create NSO Order Min/Max File (If Needed)**
+- If the product is for an NSO (New Store Opening), create a **266NSO ORDER MIN MAX file**.
+- Save as **`266_Min_Maxcustom.txt`** and send it to CrunchTime.
+
+---
+
+### **9️⃣ Create the Vendor BID File**
+- Generate a **200_BID file** to hold vendor product information.
+- Save as **`200_custom.txt`** and send it to CrunchTime.
+
+- **Final Step**: **Process the BID file in CrunchTime**  
+  - Select **"Accept All"** and **"Contract All"** to finalize the product setup.
+
+---
+
+### ✅ **Your Product is Now Added!**
+- Ensure that all **files were processed correctly in CrunchTime**.
+- The product is now **available for ordering & inventory tracking**.
+
+💡 *For any issues, check error messages or verify file formatting before re-uploading.*
+""")
 
 
 
